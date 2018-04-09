@@ -8,7 +8,12 @@ require(__DIR__ . '/vendor/autoload.php');
 use app\components\reports\CommonReport;
 use app\components\integration\VacanciesAPISearcher;
 
-$filename = 'test.xlsx';
+if (count($argv) < 2 || empty($argv[1])) {
+    echo 'Error!!! File for saving results is not set.';
+    exit(1);
+}
+
+$filename = $argv[1];
 $report = new CommonReport();
 
 try {
