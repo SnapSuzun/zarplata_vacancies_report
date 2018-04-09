@@ -1,6 +1,6 @@
 <?php
 
-require_once 'VacanciesReport.php';
+namespace app\components\reports;
 
 /**
  * Отчет "Топ вакансий по рубрикам"
@@ -9,31 +9,6 @@ require_once 'VacanciesReport.php';
  */
 class ReportTopVacanciesByRubrics extends VacanciesReport
 {
-    /**
-     * Генерация отчета
-     * @param array $queryParams Параметры, которые используются для запроса в АПИ
-     * @param string $filename Название файла, в который будет сохранен сгенерированный отчет
-     * @throws ErrorException
-     */
-    public function build(string $filename, array $queryParams = [])
-    {
-        $this->generateData($queryParams);
-        $this->save($filename);
-    }
-
-    /**
-     * @param string $filename
-     */
-    public function save(string $filename)
-    {
-        $rows = $this->prepareRows();
-        $f = fopen($filename, 'w');
-        fprintf($f, implode("\r\n", array_map(function ($item) {
-            return implode(',', $item);
-        }, $rows)));
-        fclose($f);
-    }
-
     /**
      * Подсчет статистики по рубрикам в очередной вакансии
      * @param array $vacancy
@@ -64,5 +39,13 @@ class ReportTopVacanciesByRubrics extends VacanciesReport
                 'vacanciesQuantity' => $quantity,
             ];
         }, array_keys($this->data), $this->data);
+    }
+
+    /**
+     * @return string
+     */
+    public static function reportName(): string
+    {
+        return 'Top vacancies by rubrics';
     }
 }

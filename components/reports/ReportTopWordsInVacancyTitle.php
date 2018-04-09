@@ -1,6 +1,7 @@
 <?php
 
-require_once 'VacanciesReport.php';
+namespace app\components\reports;
+
 
 /**
  * Отчет "Топ слов по упоминанию их в заголовках вакансий"
@@ -8,31 +9,6 @@ require_once 'VacanciesReport.php';
  */
 class ReportTopWordsInVacancyTitle extends VacanciesReport
 {
-    /**
-     * Генерация отчета
-     * @param array $queryParams Параметры, которые используются для запроса в АПИ
-     * @param string $filename Название файла, в который будет сохранен сгенерированный отчет
-     * @throws ZarplataAPIException
-     */
-    public function build(string $filename, array $queryParams = [])
-    {
-        $this->generateData($queryParams);
-        $this->save($filename);
-    }
-
-    /**
-     * @param string $filename
-     */
-    public function save(string $filename)
-    {
-        $rows = $this->prepareRows();
-        $f = fopen($filename, 'w');
-        fprintf($f, implode("\r\n", array_map(function ($item) {
-            return implode(',', $item);
-        }, $rows)));
-        fclose($f);
-    }
-
     /**
      * Поиск слов в названии вакансии
      * @param array $vacancy
@@ -57,7 +33,7 @@ class ReportTopWordsInVacancyTitle extends VacanciesReport
      * Подготовка статистики для вывода
      * @return array
      */
-    public function prepareRows():array
+    public function prepareRows(): array
     {
         arsort($this->data);
         return array_map(function ($word, $quantity) {
@@ -73,7 +49,7 @@ class ReportTopWordsInVacancyTitle extends VacanciesReport
      * @param string $word
      * @return bool
      */
-    protected static function validateWord(string $word):bool
+    protected static function validateWord(string $word): bool
     {
         return !in_array($word, static::skippedWords()) && !is_numeric($word);
     }
@@ -82,7 +58,7 @@ class ReportTopWordsInVacancyTitle extends VacanciesReport
      * Список слов, которые не стоит учитывать в отчете
      * @return array
      */
-    protected static function skippedWords():array
+    protected static function skippedWords(): array
     {
         return [
             'на',
@@ -92,7 +68,23 @@ class ReportTopWordsInVacancyTitle extends VacanciesReport
             'из',
             'над',
             'ул',
-            'ост'
+            'ост',
+            'ст',
+            'со',
+            'во',
+            'до',
+            'за',
+            'кв',
+            'от',
+            'пл',
         ];
+    }
+
+    /**
+     * @return string
+     */
+    public static function reportName(): string
+    {
+        return 'Top words in vacancy title';
     }
 }

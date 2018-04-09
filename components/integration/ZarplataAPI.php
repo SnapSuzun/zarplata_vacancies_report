@@ -1,5 +1,6 @@
 <?php
-require_once 'ZarplataAPIException.php';
+
+namespace app\components\integration;
 
 /**
  * Болванка для дальнейших интеграций с различными методами АПИ Zarplata.ru и т.д.
@@ -70,6 +71,10 @@ abstract class ZarplataAPI
             $errorMessage = '';
             if (isset($decodedResponse['errors']) && !empty($decodedResponse['errors'])) {
                 $errorMessage = $decodedResponse['errors'][0]['message'];
+            }
+            if (defined('VERBOSE_LOG') && VERBOSE_LOG) {
+                echo "Response from {$url}:" . PHP_EOL;
+                echo $response . PHP_EOL . PHP_EOL;
             }
             throw new ZarplataAPIException("API responded with error '{$errorMessage}'. Response code = {$responseCode}");
         }

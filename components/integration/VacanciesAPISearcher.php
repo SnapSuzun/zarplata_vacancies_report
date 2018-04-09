@@ -1,14 +1,15 @@
 <?php
-require_once 'ZarplataAPI.php';
+
+namespace app\components\integration;
 
 /**
  * Поиск и постраничный перебор вакансий
- * 
+ *
  * Class VacanciesAPISearcher
  */
 class VacanciesAPISearcher extends ZarplataAPI
 {
-    const VACANCIES_URI = 'vacancies2';
+    const VACANCIES_URI = 'vacancies';
 
     const PERIOD_TODAY = 'today';
     const PERIOD_LAST_THREE_DAYS = 'three';
@@ -68,6 +69,12 @@ class VacanciesAPISearcher extends ZarplataAPI
             $this->offset = ($queryParams['offset'] ?? 0) + count($data);
         }
 
+        if (defined('VERBOSE_LOG') && VERBOSE_LOG) {
+            if (!is_null($this->commonCount) && !is_null($this->offset)) {
+                echo "Loaded {$this->offset} vacancies of {$this->commonCount}" . PHP_EOL;
+            }
+        }
+
         return $data;
     }
 
@@ -82,7 +89,6 @@ class VacanciesAPISearcher extends ZarplataAPI
         if (!is_null($this->commonCount) && $this->offset >= $this->commonCount) {
             return false;
         }
-        print $this->offset . PHP_EOL;
         return $this->find($this->offset, $limit);
     }
 
@@ -90,7 +96,7 @@ class VacanciesAPISearcher extends ZarplataAPI
      * Формирование строки URL
      * @return string
      */
-    public static function apiUrl() : string
+    public static function apiUrl(): string
     {
         return rtrim(static::API_URL, '/') . '/' . ltrim(static::VACANCIES_URI, '/');
     }
@@ -98,7 +104,7 @@ class VacanciesAPISearcher extends ZarplataAPI
     /**
      * @return array
      */
-    protected static function possibleQueryParameters() : array
+    protected static function possibleQueryParameters(): array
     {
         return [
             'geo_id',
