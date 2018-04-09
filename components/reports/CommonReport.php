@@ -21,6 +21,7 @@ class CommonReport extends VacanciesReport
     protected $reportTopWordsInVacancyTitle = null;
 
     /**
+     * Сохранение статистики в файл
      * @param string $filename
      */
     public function save(string $filename)
